@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from ..core.io import (
+from bioflow_sim.core.io import (
     fastq_writer,
     prepare_output_directory,
     read_fasta,
@@ -13,13 +13,13 @@ from ..core.io import (
     write_json,
     write_tsv,
 )
-from ..generators.contacts import (
+from bioflow_sim.generators.contacts import (
     ENZYMES,
     contact_read_sequences,
     find_restriction_sites,
     sample_contact,
 )
-from ..generators.read_models import TECHNOLOGIES, introduce_errors
+from bioflow_sim.generators.read_models import TECHNOLOGIES, introduce_errors
 
 HIC_ENZYMES = tuple(sorted(ENZYMES))
 

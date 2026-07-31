@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 
-from .random_values import weighted_index
+from bioflow_sim.generators.random_values import weighted_index
 
 DNA_ALPHABET = frozenset('ACGT')
 

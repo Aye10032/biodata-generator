@@ -4,17 +4,17 @@ from pathlib import Path
 import click
 from loguru import logger
 
-from . import __version__
-from .simulators.bulk_rna import (
+from bioflow_sim import __version__
+from bioflow_sim.simulators.bulk_rna import (
     BULK_RNA_LAYOUTS,
     BULK_RNA_STRANDEDNESS,
     simulate_bulk_rna,
 )
-from .simulators.chromatin import CHROMATIN_ASSAYS, simulate_chromatin
-from .simulators.dna import DNA_TECHNOLOGY_NAMES, simulate_dna
-from .simulators.hic import HIC_ENZYMES, simulate_hic
-from .simulators.methylation import METHYLATION_PROTOCOLS, simulate_methylation
-from .simulators.scrna import SCRNA_PROTOCOLS, simulate_scrna
+from bioflow_sim.simulators.chromatin import CHROMATIN_ASSAYS, simulate_chromatin
+from bioflow_sim.simulators.dna import DNA_TECHNOLOGY_NAMES, simulate_dna
+from bioflow_sim.simulators.hic import HIC_ENZYMES, simulate_hic
+from bioflow_sim.simulators.methylation import METHYLATION_PROTOCOLS, simulate_methylation
+from bioflow_sim.simulators.scrna import SCRNA_PROTOCOLS, simulate_scrna
 
 
 def configure_logging(verbose: bool) -> None:

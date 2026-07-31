@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from ..core.io import (
+from bioflow_sim.core.io import (
     fastq_writer,
     prepare_output_directory,
     read_fasta,
@@ -13,14 +13,14 @@ from ..core.io import (
     write_json,
     write_tsv,
 )
-from ..generators.methylation import (
+from bioflow_sim.generators.methylation import (
     convert_unmethylated_cytosines,
     generate_cpg_methylation,
     sample_template_around_cpg,
 )
-from ..generators.random_values import sample_positive_normal
-from ..generators.read_models import TECHNOLOGIES, introduce_errors
-from ..generators.sequences import reverse_complement
+from bioflow_sim.generators.random_values import sample_positive_normal
+from bioflow_sim.generators.read_models import TECHNOLOGIES, introduce_errors
+from bioflow_sim.generators.sequences import reverse_complement
 
 METHYLATION_PROTOCOLS = ('wgbs', 'emseq')
 

@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 
-from .sequences import GenomicTemplate, reverse_complement
+from bioflow_sim.generators.sequences import GenomicTemplate, reverse_complement
 
 
 @dataclass(frozen=True)

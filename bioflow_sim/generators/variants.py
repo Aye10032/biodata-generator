@@ -1,8 +1,8 @@
 import random
 from dataclasses import dataclass
 
-from .random_values import weighted_index
-from .sequences import DNA_ALPHABET
+from bioflow_sim.generators.random_values import weighted_index
+from bioflow_sim.generators.sequences import DNA_ALPHABET
 
 
 @dataclass(frozen=True)

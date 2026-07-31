@@ -2,7 +2,7 @@ import bisect
 import random
 from dataclasses import dataclass
 
-from .sequences import reverse_complement
+from bioflow_sim.generators.sequences import reverse_complement
 
 
 @dataclass(frozen=True)

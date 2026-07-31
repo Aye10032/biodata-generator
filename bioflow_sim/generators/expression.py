@@ -2,7 +2,7 @@ import random
 import re
 from dataclasses import dataclass
 
-from .random_values import random_dna, weighted_index
+from bioflow_sim.generators.random_values import random_dna, weighted_index
 
 GENE_PATTERNS = (
     re.compile(r'(?:gene_id|gene)[=:]([^\s\]]+)'),

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from ..core.io import (
+from bioflow_sim.core.io import (
     fastq_writer,
     prepare_output_directory,
     read_fasta,
@@ -15,15 +15,15 @@ from ..core.io import (
     write_json,
     write_tsv,
 )
-from ..generators.expression import (
+from bioflow_sim.generators.expression import (
     build_transcripts,
     choose_transcript,
     differential_expression_weights,
     sample_transcript_fragment,
 )
-from ..generators.random_values import zipf_weights
-from ..generators.read_models import TECHNOLOGIES, introduce_errors
-from ..generators.sequences import reverse_complement
+from bioflow_sim.generators.random_values import zipf_weights
+from bioflow_sim.generators.read_models import TECHNOLOGIES, introduce_errors
+from bioflow_sim.generators.sequences import reverse_complement
 
 BULK_RNA_LAYOUTS = ('se', 'pe')
 BULK_RNA_STRANDEDNESS = ('unstranded', 'forward', 'reverse')

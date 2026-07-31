@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from ..core.io import (
+from bioflow_sim.core.io import (
     fastq_writer,
     prepare_output_directory,
     read_fasta,
@@ -14,14 +14,14 @@ from ..core.io import (
     write_rows,
     write_tsv,
 )
-from ..generators.random_values import sample_positive_normal
-from ..generators.read_models import TECHNOLOGIES, introduce_errors
-from ..generators.sequences import (
+from bioflow_sim.generators.random_values import sample_positive_normal
+from bioflow_sim.generators.read_models import TECHNOLOGIES, introduce_errors
+from bioflow_sim.generators.sequences import (
     DNA_ALPHABET,
     reverse_complement,
     sample_genomic_template,
 )
-from ..generators.variants import apply_snvs, generate_snvs
+from bioflow_sim.generators.variants import apply_snvs, generate_snvs
 
 DNA_TECHNOLOGY_NAMES = tuple(sorted(TECHNOLOGIES))
 
