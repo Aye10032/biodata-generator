@@ -12,11 +12,6 @@ uv sync --dev
 uv run bioflow-sim --help
 ```
 
-Runtime dependencies are deliberately small:
-
-- Click for command-line parsing.
-- Loguru for structured human-readable logs.
-
 ## Genomic sequencing
 
 Supported technology names:
@@ -130,12 +125,23 @@ bioflow_sim/
   cli.py
   core/
     io.py
-  sequencing/
+  generators/
+    expression.py
+    random_values.py
+    read_models.py
+    sequences.py
+  simulators/
     dna.py
-    models.py
-  single_cell/
-    rna.py
+    scrna.py
 ```
+
+`generators/` contains data classes and pure value-generation functions, such
+as platform error profiles, random lengths, sequence changes, barcodes, and
+expression weights. It does not assemble output directories.
+
+`simulators/` contains complete assay scenarios called by the CLI. These
+functions combine reference input, generators, FASTQ writing, truth generation,
+and manifests. `core/` is restricted to shared I/O, formats, and validation.
 
 ## Tests
 
