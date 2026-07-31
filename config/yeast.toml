@@ -1,0 +1,183 @@
+version = 2
+workspace_root = "../.."
+
+[defaults]
+seed = 114514
+
+[cases.illumina_se]
+simulator = "dna"
+[cases.illumina_se.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/wgs/illumina_se"
+sample = "YEAST_SE"
+technology_name = "illumina-se"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 10000
+long_read_sd = 3000
+snvs = 20
+
+[cases.illumina_pe]
+simulator = "dna"
+[cases.illumina_pe.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/wgs/illumina_pe"
+sample = "YEAST_PE"
+technology_name = "illumina-pe"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 10000
+long_read_sd = 3000
+snvs = 20
+
+[cases.pacbio_clr]
+simulator = "dna"
+[cases.pacbio_clr.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/wgs/pacbio_clr"
+sample = "YEAST_CLR"
+technology_name = "pacbio-clr"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 10000
+long_read_sd = 4000
+snvs = 20
+
+[cases.pacbio_hifi]
+simulator = "dna"
+[cases.pacbio_hifi.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/wgs/pacbio_hifi"
+sample = "YEAST_HIFI"
+technology_name = "pacbio-hifi"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 10000
+long_read_sd = 2000
+snvs = 20
+
+[cases.ont]
+simulator = "dna"
+[cases.ont.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/wgs/ont"
+sample = "YEAST_ONT"
+technology_name = "ont"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 10000
+long_read_sd = 4000
+snvs = 20
+
+[cases.bulk_rna]
+simulator = "bulk-rna"
+[cases.bulk_rna.parameters]
+transcripts_path = "Yeast/reference/rna.fna"
+annotation_path = "Yeast/reference/genomic.gtf"
+output_dir = "Yeast/rna-seq/illumina_pe"
+sample_prefix = "YEAST_RNA"
+samples_per_group = 1
+reads_per_sample = 200
+layout = "pe"
+strandedness = "forward"
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+fold_change = 4.0
+
+[cases.scrna_10x]
+simulator = "scrna"
+[cases.scrna_10x.parameters]
+transcripts_path = "Yeast/reference/rna.fna"
+annotation_path = "Yeast/reference/genomic.gtf"
+output_dir = "Yeast/sc-rna-seq/10x_3prime"
+sample = "YEAST_10X"
+protocol = "10x-3prime"
+cells = 4
+reads_per_cell = 100
+cdna_read_length = 90
+smartseq_read_length = 100
+fragment_mean = 350
+fragment_sd = 40
+
+[cases.scrna_smartseq2]
+simulator = "scrna"
+[cases.scrna_smartseq2.parameters]
+transcripts_path = "Yeast/reference/rna.fna"
+annotation_path = "Yeast/reference/genomic.gtf"
+output_dir = "Yeast/sc-rna-seq/smartseq2"
+sample = "YEAST_SS2"
+protocol = "smartseq2"
+cells = 4
+reads_per_cell = 100
+cdna_read_length = 90
+smartseq_read_length = 100
+fragment_mean = 350
+fragment_sd = 40
+
+[cases.atac]
+simulator = "chromatin"
+[cases.atac.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/atac-seq/atac"
+sample = "YEAST_ATAC"
+assay = "atac"
+reads = 200
+peaks = 20
+peak_width = 300
+enrichment = 0.8
+read_length = 75
+fragment_mean = 200
+fragment_sd = 50
+
+[cases.chip]
+simulator = "chromatin"
+[cases.chip.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/chip-seq/chip"
+sample = "YEAST_CHIP"
+assay = "chip"
+reads = 200
+peaks = 20
+peak_width = 500
+enrichment = 0.8
+read_length = 75
+fragment_mean = 250
+fragment_sd = 40
+
+[cases.cuttag]
+simulator = "chromatin"
+[cases.cuttag.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/cuttag/cuttag"
+sample = "YEAST_CUTTAG"
+assay = "cuttag"
+reads = 200
+peaks = 20
+peak_width = 300
+enrichment = 0.9
+read_length = 75
+fragment_mean = 180
+fragment_sd = 35
+
+[cases.hic]
+simulator = "hic"
+[cases.hic.parameters]
+reference = "Yeast/reference/GCF_000146045.2_R64_genomic.fna"
+output_dir = "Yeast/Hi-C/hindiii"
+sample = "YEAST_HIC"
+enzyme_name = "hindiii"
+reads = 200
+read_length = 100
+intra_rate = 0.9
+mean_distance = 50000

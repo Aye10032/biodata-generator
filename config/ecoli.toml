@@ -1,0 +1,108 @@
+version = 2
+workspace_root = "../.."
+
+[defaults]
+seed = 114514
+
+[cases.illumina_se]
+simulator = "dna"
+[cases.illumina_se.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/wgs/illumina_se"
+sample = "ECOLI_SE"
+technology_name = "illumina-se"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 8000
+long_read_sd = 3000
+snvs = 10
+
+[cases.illumina_pe]
+simulator = "dna"
+[cases.illumina_pe.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/wgs/illumina_pe"
+sample = "ECOLI_PE"
+technology_name = "illumina-pe"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 8000
+long_read_sd = 3000
+snvs = 10
+
+[cases.pacbio_clr]
+simulator = "dna"
+[cases.pacbio_clr.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/wgs/pacbio_clr"
+sample = "ECOLI_CLR"
+technology_name = "pacbio-clr"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 8000
+long_read_sd = 3000
+snvs = 10
+
+[cases.pacbio_hifi]
+simulator = "dna"
+[cases.pacbio_hifi.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/wgs/pacbio_hifi"
+sample = "ECOLI_HIFI"
+technology_name = "pacbio-hifi"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 8000
+long_read_sd = 1500
+snvs = 10
+
+[cases.ont]
+simulator = "dna"
+[cases.ont.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/wgs/ont"
+sample = "ECOLI_ONT"
+technology_name = "ont"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 8000
+long_read_sd = 3000
+snvs = 10
+
+[cases.bulk_rna]
+simulator = "bulk-rna"
+[cases.bulk_rna.parameters]
+transcripts_path = "Ecoli/reference/cds_from_genomic.fna"
+annotation_path = "Ecoli/reference/genomic.gtf"
+output_dir = "Ecoli/rna-seq/illumina_pe"
+sample_prefix = "ECOLI_RNA"
+samples_per_group = 1
+reads_per_sample = 200
+layout = "pe"
+strandedness = "forward"
+read_length = 100
+fragment_mean = 250
+fragment_sd = 35
+fold_change = 4.0
+
+[cases.hic]
+simulator = "hic"
+[cases.hic.parameters]
+reference = "Ecoli/reference/GCF_000005845.2_ASM584v2_genomic.fna"
+output_dir = "Ecoli/Hi-C/mboi"
+sample = "ECOLI_HIC"
+enzyme_name = "mboi"
+reads = 100
+read_length = 100
+intra_rate = 1.0
+mean_distance = 20000

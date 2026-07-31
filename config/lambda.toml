@@ -1,0 +1,80 @@
+version = 2
+workspace_root = "../.."
+
+[defaults]
+seed = 114514
+
+[cases.illumina_se]
+simulator = "dna"
+[cases.illumina_se.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/illumina_se"
+sample = "LAMBDA_SE"
+technology_name = "illumina-se"
+reads = 100
+read_length = 100
+fragment_mean = 300
+fragment_sd = 30
+long_read_mean = 3000
+long_read_sd = 500
+snvs = 5
+
+[cases.illumina_pe]
+simulator = "dna"
+[cases.illumina_pe.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/illumina_pe"
+sample = "LAMBDA_PE"
+technology_name = "illumina-pe"
+reads = 100
+read_length = 100
+fragment_mean = 300
+fragment_sd = 30
+long_read_mean = 3000
+long_read_sd = 500
+snvs = 5
+
+[cases.pacbio_clr]
+simulator = "dna"
+[cases.pacbio_clr.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/pacbio_clr"
+sample = "LAMBDA_CLR"
+technology_name = "pacbio-clr"
+reads = 25
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 5000
+long_read_sd = 1500
+snvs = 5
+
+[cases.pacbio_hifi]
+simulator = "dna"
+[cases.pacbio_hifi.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/pacbio_hifi"
+sample = "LAMBDA_HIFI"
+technology_name = "pacbio-hifi"
+reads = 25
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 5000
+long_read_sd = 1000
+snvs = 5
+
+[cases.ont]
+simulator = "dna"
+[cases.ont.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/ont"
+sample = "LAMBDA_ONT"
+technology_name = "ont"
+reads = 25
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 5000
+long_read_sd = 2000
+snvs = 5

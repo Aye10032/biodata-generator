@@ -1,0 +1,213 @@
+version = 2
+workspace_root = "../.."
+
+[defaults]
+seed = 114514
+
+[cases.illumina_se]
+simulator = "dna"
+[cases.illumina_se.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgs/illumina_se"
+sample = "H21_SE"
+technology_name = "illumina-se"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 12000
+long_read_sd = 4000
+snvs = 20
+
+[cases.illumina_pe]
+simulator = "dna"
+[cases.illumina_pe.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgs/illumina_pe"
+sample = "H21_PE"
+technology_name = "illumina-pe"
+reads = 200
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 12000
+long_read_sd = 4000
+snvs = 20
+
+[cases.pacbio_clr]
+simulator = "dna"
+[cases.pacbio_clr.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgs/pacbio_clr"
+sample = "H21_CLR"
+technology_name = "pacbio-clr"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 12000
+long_read_sd = 5000
+snvs = 20
+
+[cases.pacbio_hifi]
+simulator = "dna"
+[cases.pacbio_hifi.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgs/pacbio_hifi"
+sample = "H21_HIFI"
+technology_name = "pacbio-hifi"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 12000
+long_read_sd = 2500
+snvs = 20
+
+[cases.ont]
+simulator = "dna"
+[cases.ont.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgs/ont"
+sample = "H21_ONT"
+technology_name = "ont"
+reads = 50
+read_length = 150
+fragment_mean = 350
+fragment_sd = 35
+long_read_mean = 12000
+long_read_sd = 5000
+snvs = 20
+
+[cases.bulk_rna]
+simulator = "bulk-rna"
+[cases.bulk_rna.parameters]
+transcripts_path = "Homo_chr21/reference/transcripts.fa"
+annotation_path = "Homo_chr21/reference/genes.gtf"
+output_dir = "Homo_chr21/rna-seq/illumina_pe"
+sample_prefix = "H21_RNA"
+samples_per_group = 1
+reads_per_sample = 200
+layout = "pe"
+strandedness = "forward"
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+fold_change = 4.0
+
+[cases.scrna_10x]
+simulator = "scrna"
+[cases.scrna_10x.parameters]
+transcripts_path = "Homo_chr21/reference/transcripts.fa"
+annotation_path = "Homo_chr21/reference/genes.gtf"
+output_dir = "Homo_chr21/sc-rna-seq/10x_3prime"
+sample = "H21_10X"
+protocol = "10x-3prime"
+cells = 4
+reads_per_cell = 100
+cdna_read_length = 90
+smartseq_read_length = 100
+fragment_mean = 350
+fragment_sd = 40
+
+[cases.scrna_smartseq2]
+simulator = "scrna"
+[cases.scrna_smartseq2.parameters]
+transcripts_path = "Homo_chr21/reference/transcripts.fa"
+annotation_path = "Homo_chr21/reference/genes.gtf"
+output_dir = "Homo_chr21/sc-rna-seq/smartseq2"
+sample = "H21_SS2"
+protocol = "smartseq2"
+cells = 4
+reads_per_cell = 100
+cdna_read_length = 90
+smartseq_read_length = 100
+fragment_mean = 350
+fragment_sd = 40
+
+[cases.atac]
+simulator = "chromatin"
+[cases.atac.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/atac-seq/atac"
+sample = "H21_ATAC"
+assay = "atac"
+reads = 200
+peaks = 20
+peak_width = 500
+enrichment = 0.8
+read_length = 75
+fragment_mean = 200
+fragment_sd = 50
+
+[cases.chip]
+simulator = "chromatin"
+[cases.chip.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/chip-seq/chip"
+sample = "H21_CHIP"
+assay = "chip"
+reads = 200
+peaks = 20
+peak_width = 500
+enrichment = 0.8
+read_length = 75
+fragment_mean = 250
+fragment_sd = 40
+
+[cases.cuttag]
+simulator = "chromatin"
+[cases.cuttag.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/cuttag/cuttag"
+sample = "H21_CUTTAG"
+assay = "cuttag"
+reads = 200
+peaks = 20
+peak_width = 300
+enrichment = 0.9
+read_length = 75
+fragment_mean = 180
+fragment_sd = 35
+
+[cases.wgbs]
+simulator = "methylation"
+[cases.wgbs.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/wgbs/wgbs"
+sample = "H21_WGBS"
+protocol = "wgbs"
+reads = 200
+sites = 100
+methylation_rate = 0.7
+conversion_rate = 0.99
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+
+[cases.emseq]
+simulator = "methylation"
+[cases.emseq.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/em-seq/emseq"
+sample = "H21_EMSEQ"
+protocol = "emseq"
+reads = 200
+sites = 100
+methylation_rate = 0.7
+conversion_rate = 0.995
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+
+[cases.hic]
+simulator = "hic"
+[cases.hic.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+output_dir = "Homo_chr21/Hi-C/hindiii"
+sample = "H21_HIC"
+enzyme_name = "hindiii"
+reads = 200
+read_length = 100
+intra_rate = 1.0
+mean_distance = 100000

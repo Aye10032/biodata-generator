@@ -12,6 +12,71 @@ uv sync --dev
 uv run bioflow-sim --help
 ```
 
+## Batch generation
+
+Each reference species has its own configuration:
+
+```bash
+uv run bioflow-sim batch config/lambda.toml
+uv run bioflow-sim batch config/ecoli.toml
+uv run bioflow-sim batch config/yeast.toml
+uv run bioflow-sim batch config/homo_chr21.toml
+```
+
+Inspect or plan the batch without writing data:
+
+```bash
+uv run bioflow-sim batch config/yeast.toml --list-cases
+uv run bioflow-sim batch config/yeast.toml --dry-run
+```
+
+Run one or several selected cases:
+
+```bash
+uv run bioflow-sim batch config/yeast.toml \
+  --case illumina_pe \
+  --case hic
+```
+
+Use `--continue-on-error` to attempt later cases after one fails. Existing
+non-empty output directories are never overwritten.
+
+The configuration is TOML and uses simulator function parameter names:
+
+```toml
+version = 2
+workspace_root = "../.."
+
+[defaults]
+seed = 114514
+
+[cases.illumina_pe]
+simulator = "dna"
+enabled = true
+
+[cases.illumina_pe.parameters]
+reference = "Lambda/reference/GCF_000840245.1_ViralProj14204_genomic.fna"
+output_dir = "Lambda/wgs/illumina_pe"
+sample = "LAMBDA_PE"
+technology_name = "illumina-pe"
+reads = 200
+read_length = 100
+fragment_mean = 300
+fragment_sd = 30
+long_read_mean = 1000
+long_read_sd = 100
+snvs = 5
+```
+
+Reference, annotation, transcript, and output paths are resolved relative to
+`workspace_root`, which is itself resolved relative to the TOML file. Case names
+come directly from TOML table names, so no separate `id` field is needed:
+
+- [`config/lambda.toml`](config/lambda.toml)
+- [`config/ecoli.toml`](config/ecoli.toml)
+- [`config/yeast.toml`](config/yeast.toml)
+- [`config/homo_chr21.toml`](config/homo_chr21.toml)
+
 ## Genomic sequencing
 
 Supported technology names:
@@ -207,6 +272,7 @@ fixtures are intentionally small and should be easy to inspect.
 bioflow_sim/
   cli.py
   core/
+    config.py
     io.py
   generators/
     contacts.py
@@ -224,6 +290,8 @@ bioflow_sim/
     hic.py
     methylation.py
     scrna.py
+  orchestration/
+    batch.py
 ```
 
 `generators/` contains data classes and pure value-generation functions, such

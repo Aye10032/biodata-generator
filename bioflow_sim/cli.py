@@ -5,6 +5,8 @@ import click
 from loguru import logger
 
 from bioflow_sim import __version__
+from bioflow_sim.core.config import load_batch_config
+from bioflow_sim.orchestration.batch import run_batch, select_cases
 from bioflow_sim.simulators.bulk_rna import (
     BULK_RNA_LAYOUTS,
     BULK_RNA_STRANDEDNESS,
@@ -33,6 +35,53 @@ def configure_logging(verbose: bool) -> None:
 def cli(verbose: bool) -> None:
     """Generate deterministic sequencing fixtures from reference sequences."""
     configure_logging(verbose)
+
+
+@cli.command('batch')
+@click.argument(
+    'config_path',
+    type=click.Path(path_type=Path, exists=True, dir_okay=False, readable=True),
+)
+@click.option(
+    '--case',
+    'case_names',
+    multiple=True,
+    help='Run only the selected named case; repeat to select multiple cases.',
+)
+@click.option('--list-cases', is_flag=True, help='List configured cases without running them.')
+@click.option('--dry-run', is_flag=True, help='Resolve and display cases without generating files.')
+@click.option('--continue-on-error', is_flag=True, help='Continue after a case fails.')
+def batch_command(
+    config_path: Path,
+    case_names: tuple[str, ...],
+    list_cases: bool,
+    dry_run: bool,
+    continue_on_error: bool,
+) -> None:
+    """Generate multiple cases from a TOML configuration file."""
+    try:
+        config = load_batch_config(config_path)
+        if list_cases:
+            cases = select_cases(config, case_names) if case_names else config.cases
+            for case in cases:
+                state = 'enabled' if case.enabled else 'disabled'
+                click.echo(f'{case.name}\t{case.simulator}\t{state}')
+            return
+        results = run_batch(
+            config,
+            selected_names=case_names,
+            dry_run=dry_run,
+            continue_on_error=continue_on_error,
+        )
+    except (OSError, TypeError, ValueError) as error:
+        raise click.ClickException(str(error)) from error
+
+    completed = sum(result.status == 'completed' for result in results)
+    planned = sum(result.status == 'planned' for result in results)
+    failed = sum(result.status == 'failed' for result in results)
+    click.echo(f'Batch summary: completed={completed} planned={planned} failed={failed}')
+    if failed:
+        raise click.ClickException(f'{failed} case(s) failed')
 
 
 @cli.command('dna')
