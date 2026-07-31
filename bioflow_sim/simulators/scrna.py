@@ -108,18 +108,12 @@ def simulate_scrna(
                 current_weights = cell_expression_weights(weights, cell_types[cell_index])
                 for molecule in range(1, reads_per_cell + 1):
                     ordinal += 1
-                    transcript = choose_transcript(
-                        rng, transcripts, current_weights, cdna_read_length
-                    )
+                    transcript = choose_transcript(rng, transcripts, current_weights, cdna_read_length)
                     transcript_id = transcript.identifier
                     gene_id = transcript.feature_id
                     umi = random_dna(rng, 12)
-                    fragment = sample_three_prime_fragment(
-                        rng, transcript, cdna_read_length
-                    )
-                    observed, substitutions, insertions, deletions = introduce_errors(
-                        fragment.sequence, rng, illumina
-                    )
+                    fragment = sample_three_prime_fragment(rng, transcript, cdna_read_length)
+                    observed, substitutions, insertions, deletions = introduce_errors(fragment.sequence, rng, illumina)
                     read_id = f'{sample}:{ordinal:09d}'
                     barcode_read = barcode + umi
                     write_fastq_record(r1, f'{read_id}/1', barcode_read, 'I' * len(barcode_read))
@@ -155,9 +149,7 @@ def simulate_scrna(
             output_files.extend([str(r1_path.relative_to(output_dir)), str(r2_path.relative_to(output_dir))])
             with fastq_writer(r1_path) as r1, fastq_writer(r2_path) as r2:
                 for molecule in range(1, reads_per_cell + 1):
-                    transcript = choose_transcript(
-                        rng, transcripts, current_weights, smartseq_read_length * 2
-                    )
+                    transcript = choose_transcript(rng, transcripts, current_weights, smartseq_read_length * 2)
                     transcript_id = transcript.identifier
                     gene_id = transcript.feature_id
                     fragment = sample_transcript_fragment(
@@ -167,9 +159,7 @@ def simulate_scrna(
                         fragment_mean,
                         fragment_sd,
                     )
-                    read1, s1, i1, d1 = introduce_errors(
-                        fragment.sequence[:smartseq_read_length], rng, illumina
-                    )
+                    read1, s1, i1, d1 = introduce_errors(fragment.sequence[:smartseq_read_length], rng, illumina)
                     read2, s2, i2, d2 = introduce_errors(
                         reverse_complement(fragment.sequence[-smartseq_read_length:]),
                         rng,

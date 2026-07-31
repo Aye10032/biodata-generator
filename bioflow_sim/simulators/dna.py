@@ -11,6 +11,7 @@ from ..core.io import (
     validate_sample_name,
     write_fastq_record,
     write_json,
+    write_rows,
     write_tsv,
 )
 from ..generators.random_values import sample_positive_normal
@@ -20,6 +21,7 @@ from ..generators.sequences import (
     reverse_complement,
     sample_genomic_template,
 )
+from ..generators.variants import apply_snvs, generate_snvs
 
 DNA_TECHNOLOGY_NAMES = tuple(sorted(TECHNOLOGIES))
 
@@ -37,6 +39,7 @@ def simulate_dna(
     fragment_sd: int,
     long_read_mean: int | None,
     long_read_sd: int | None,
+    snvs: int,
 ) -> dict[str, object]:
     if reads < 1:
         raise ValueError('reads must be at least 1')
@@ -48,10 +51,12 @@ def simulate_dna(
     if not usable:
         raise ValueError('reference has no usable DNA sequences')
 
+    rng = random.Random(seed)
+    variants = generate_snvs(rng, usable, snvs)
+    simulation_sequences = apply_snvs(usable, variants)
     prepare_output_directory(output_dir)
     raw_dir = output_dir / 'raw'
     truth_path = output_dir / 'truth' / 'reads.tsv'
-    rng = random.Random(seed)
     truth_rows: list[list[object]] = []
     logger.info('Loaded {} reference sequences from {}', len(usable), reference)
 
@@ -70,7 +75,7 @@ def simulate_dna(
         for number in range(1, reads + 1):
             if technology.paired:
                 length = read_length or technology.mean_length
-                eligible = [(name, seq) for name, seq in usable if len(seq) >= length * 2]
+                eligible = [(name, seq) for name, seq in simulation_sequences if len(seq) >= length * 2]
                 if not eligible:
                     raise ValueError(f'no contig is long enough for paired reads of {length} bp')
                 max_fragment = max(len(seq) for _, seq in eligible)
@@ -105,12 +110,10 @@ def simulate_dna(
                     mean = long_read_mean or read_length or technology.mean_length
                     sd = long_read_sd if long_read_sd is not None else technology.length_sd
                     minimum_length = 100
-                max_length = max(len(seq) for _, seq in usable)
+                max_length = max(len(seq) for _, seq in simulation_sequences)
                 template_length = sample_positive_normal(rng, mean, sd, minimum_length, max_length)
-                template = sample_genomic_template(rng, usable, template_length)
-                observed, substitutions, insertions, deletions = introduce_errors(
-                    template.sequence, rng, technology
-                )
+                template = sample_genomic_template(rng, simulation_sequences, template_length)
+                observed, substitutions, insertions, deletions = introduce_errors(template.sequence, rng, technology)
                 read_id = f'{sample}:{number:08d}'
                 write_fastq_record(
                     single,
@@ -149,6 +152,29 @@ def simulate_dna(
         ],
         truth_rows,
     )
+    if variants:
+        variant_path = output_dir / 'truth' / 'variants.vcf'
+        write_rows(
+            variant_path,
+            [
+                ['##fileformat=VCFv4.3'],
+                ['##source=bioflow-sim'],
+                ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO'],
+                *[
+                    [
+                        variant.contig,
+                        variant.position + 1,
+                        f'SNV{index:06d}',
+                        variant.reference,
+                        variant.alternate,
+                        '.',
+                        'PASS',
+                        'SIMULATED=1',
+                    ]
+                    for index, variant in enumerate(variants, 1)
+                ],
+            ],
+        )
     metadata: dict[str, object] = {
         'schema_version': 1,
         'assay': 'dna-sequencing',
@@ -160,6 +186,7 @@ def simulate_dna(
         'read_unit_definition': 'read pairs' if technology.paired else 'reads',
         'output_files': output_files,
         'truth_file': str(truth_path.relative_to(output_dir)),
+        'variant_truth': 'truth/variants.vcf' if variants else None,
         'coordinate_system': '0-based half-open',
         'parameters': {
             'read_length': read_length,
@@ -167,6 +194,7 @@ def simulate_dna(
             'fragment_sd': fragment_sd,
             'long_read_mean': long_read_mean,
             'long_read_sd': long_read_sd,
+            'snvs': snvs,
         },
     }
     write_json(output_dir / 'manifest.json', metadata)

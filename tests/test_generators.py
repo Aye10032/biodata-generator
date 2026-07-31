@@ -40,9 +40,7 @@ def test_expression_generators_return_values_without_io() -> None:
 def test_read_generators_are_seeded_and_bounded() -> None:
     first = random.Random(9)
     second = random.Random(9)
-    assert sample_positive_normal(first, 500, 50, 100, 1000) == sample_positive_normal(
-        second, 500, 50, 100, 1000
-    )
+    assert sample_positive_normal(first, 500, 50, 100, 1000) == sample_positive_normal(second, 500, 50, 100, 1000)
 
     technology = TECHNOLOGIES['pacbio-hifi']
     observed1 = introduce_errors('ACGT' * 100, first, technology)

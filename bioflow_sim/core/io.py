@@ -85,10 +85,12 @@ def read_gtf_transcript_gene_map(path: Path) -> dict[str, str]:
 def fastq_writer(path: Path) -> Iterator[TextIO]:
     path.parent.mkdir(parents=True, exist_ok=True)
     # Blank embedded filename and mtime=0 make the compressed bytes reproducible.
-    with path.open('wb') as raw_handle:
-        with gzip.GzipFile(filename='', mode='wb', fileobj=raw_handle, compresslevel=6, mtime=0) as gzip_handle:
-            with io.TextIOWrapper(gzip_handle, encoding='ascii', newline='\n', write_through=True) as text_handle:
-                yield text_handle
+    with (
+        path.open('wb') as raw_handle,
+        gzip.GzipFile(filename='', mode='wb', fileobj=raw_handle, compresslevel=6, mtime=0) as gzip_handle,
+        io.TextIOWrapper(gzip_handle, encoding='ascii', newline='\n', write_through=True) as text_handle,
+    ):
+        yield text_handle
 
 
 def write_fastq_record(handle: TextIO, name: str, sequence: str, quality: str) -> None:
@@ -102,6 +104,18 @@ def write_tsv(path: Path, header: list[str], rows: Iterable[Iterable[object]]) -
     with path.open('w', encoding='utf-8', newline='') as handle:
         writer = csv.writer(handle, delimiter='\t', lineterminator='\n')
         writer.writerow(header)
+        writer.writerows(rows)
+
+
+def write_rows(
+    path: Path,
+    rows: Iterable[Iterable[object]],
+    delimiter: str = '\t',
+) -> None:
+    """Write delimiter-separated rows without a header."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open('w', encoding='utf-8', newline='') as handle:
+        writer = csv.writer(handle, delimiter=delimiter, lineterminator='\n')
         writer.writerows(rows)
 
 

@@ -24,11 +24,7 @@ def sample_genomic_template(
     sequences: list[tuple[str, str]],
     length: int,
 ) -> GenomicTemplate:
-    eligible = [
-        (identifier, sequence)
-        for identifier, sequence in sequences
-        if len(sequence) >= length
-    ]
+    eligible = [(identifier, sequence) for identifier, sequence in sequences if len(sequence) >= length]
     if not eligible:
         raise ValueError(f'no reference sequence is long enough for a {length} bp template')
     index = weighted_index(rng, [len(sequence) - length + 1 for _, sequence in eligible])

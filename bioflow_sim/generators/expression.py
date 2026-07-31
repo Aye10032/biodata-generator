@@ -38,9 +38,7 @@ def build_transcripts(
 ) -> list[Transcript]:
     transcripts = []
     for identifier, header, sequence in fasta_records:
-        feature_id = annotation_mapping.get(
-            identifier, feature_id_from_header(identifier, header)
-        )
+        feature_id = annotation_mapping.get(identifier, feature_id_from_header(identifier, header))
         transcripts.append(Transcript(identifier, feature_id, sequence))
     return sorted(transcripts, key=lambda transcript: transcript.identifier)
 
@@ -80,6 +78,22 @@ def cell_expression_weights(base: list[float], cell_type: int) -> list[float]:
     start = 0 if cell_type == 1 else block
     for index in range(start, min(start + block, len(state))):
         state[index] *= 5.0
+    return state
+
+
+def differential_expression_weights(
+    base: list[float],
+    group: str,
+    fold_change: float,
+) -> list[float]:
+    """Boost disjoint transcript blocks in control and treatment groups."""
+    if fold_change <= 0:
+        raise ValueError('fold change must be positive')
+    state = base.copy()
+    block = max(1, len(state) // 10)
+    start = 0 if group == 'control' else block
+    for index in range(start, min(start + block, len(state))):
+        state[index] *= fold_change
     return state
 
 

@@ -54,6 +54,89 @@ uv run bioflow-sim dna \
 For paired-end technologies, `--reads` means read pairs. For single-end and
 long-read technologies, it means individual reads.
 
+Add simulated SNVs and a truth VCF with:
+
+```bash
+uv run bioflow-sim dna \
+  --reference ../Yeast/reference/GCF_000146045.2_R64_genomic.fna \
+  --output-dir ../Yeast/wgs/smoke_illumina_variants \
+  --technology illumina-pe \
+  --reads 1000 \
+  --snvs 20
+```
+
+## Bulk RNA sequencing
+
+Generate control and treatment replicates with differential expression:
+
+```bash
+uv run bioflow-sim bulk-rna \
+  --transcripts-path ../Homo_chr21/reference/transcripts.fa \
+  --annotation-path ../Homo_chr21/reference/genes.gtf \
+  --output-dir ../Homo_chr21/rna-seq/smoke_bulk \
+  --samples-per-group 2 \
+  --reads-per-sample 1000 \
+  --layout pe \
+  --strandedness forward \
+  --read-length 100 \
+  --fold-change 4
+```
+
+The sample sheet is written to `raw/samples.tsv`. True transcript weights,
+observed read counts, and per-read origins are written under `truth/`.
+
+## Chromatin assays
+
+The `chromatin` command accepts `atac`, `chip`, or `cuttag`:
+
+```bash
+uv run bioflow-sim chromatin \
+  --reference ../Yeast/reference/GCF_000146045.2_R64_genomic.fna \
+  --output-dir ../Yeast/atac-seq/smoke \
+  --assay atac \
+  --reads 1000 \
+  --peaks 20 \
+  --peak-width 500 \
+  --enrichment 0.8
+```
+
+The FASTQ and library metadata are under `raw/`; true enriched regions are
+written as `truth/peaks.bed`.
+
+## DNA methylation
+
+```bash
+uv run bioflow-sim methylation \
+  --reference ../Homo_chr21/reference/genome.fa \
+  --output-dir ../Homo_chr21/wgbs/smoke \
+  --protocol wgbs \
+  --reads 1000 \
+  --sites 500 \
+  --methylation-rate 0.7 \
+  --conversion-rate 0.99
+```
+
+Use `--protocol emseq` for the EM-seq fixture. Selected CpG states are written
+to `truth/methylation.tsv`; unlisted cytosines are treated as methylated by the
+current small-fixture model.
+
+## Hi-C
+
+```bash
+uv run bioflow-sim hic \
+  --reference ../Yeast/reference/GCF_000146045.2_R64_genomic.fna \
+  --output-dir ../Yeast/Hi-C/smoke \
+  --enzyme hindiii \
+  --reads 1000 \
+  --read-length 100 \
+  --intra-rate 0.9 \
+  --mean-distance 50000
+```
+
+Supported enzymes are MboI, DpnII, and HindIII. The derived enzyme cut-site
+list is tool-facing input at `raw/restriction_sites.tsv`; true ligation contacts
+are in `truth/contacts.tsv`.
+
 ## Single-cell RNA sequencing
 
 The 10x-style mode writes one R1/R2 pair for the library:
@@ -126,12 +209,20 @@ bioflow_sim/
   core/
     io.py
   generators/
+    contacts.py
     expression.py
+    methylation.py
     random_values.py
     read_models.py
+    regions.py
     sequences.py
+    variants.py
   simulators/
+    bulk_rna.py
+    chromatin.py
     dna.py
+    hic.py
+    methylation.py
     scrna.py
 ```
 
@@ -149,5 +240,6 @@ and manifests. `core/` is restricted to shared I/O, formats, and validation.
 uv run pytest
 ```
 
-Tests cover deterministic Illumina output, all three long-read profiles, the
-10x barcode/UMI layout, expression-matrix output, and per-cell Smart-seq2 files.
+Tests cover deterministic Illumina output, long-read profiles, SNV truth,
+bulk RNA, chromatin assays, methylation, Hi-C, the 10x barcode/UMI layout,
+expression-matrix output, and per-cell Smart-seq2 files.
