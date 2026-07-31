@@ -1,5 +1,6 @@
 version = 2
 workspace_root = "../.."
+publish = "files-only"
 
 [defaults]
 seed = 114514

@@ -13,6 +13,7 @@ def write_batch_fixture(tmp_path: Path) -> Path:
         """
 version = 2
 workspace_root = "."
+publish = "files-only"
 
 [defaults]
 seed = 7
@@ -74,11 +75,14 @@ def test_batch_list_dry_run_and_generation(tmp_path: Path) -> None:
     generated = runner.invoke(cli, ['batch', str(config), '--case', 'small_dna'])
     assert generated.exit_code == 0, generated.output
     assert 'completed=1' in generated.output
-    assert (tmp_path / 'output/small_dna/raw/BATCH_R1.fastq.gz').exists()
+    assert (tmp_path / 'output/small_dna/BATCH_R1.fastq.gz').exists()
+    assert not (tmp_path / 'output/small_dna/raw').exists()
+    assert not (tmp_path / 'output/small_dna/truth').exists()
+    assert not (tmp_path / 'output/small_dna/manifest.json').exists()
     assert not (tmp_path / 'output/disabled_dna').exists()
 
 
-def test_default_config_resolves_repository_references() -> None:
+def test_species_configs_resolve_paths_and_publish_files_only() -> None:
     config_paths = (
         Path('config/lambda.toml'),
         Path('config/ecoli.toml'),
@@ -88,9 +92,10 @@ def test_default_config_resolves_repository_references() -> None:
     for config_path in config_paths:
         config = load_batch_config(config_path)
         assert config.cases
+        assert config.publish == 'files-only'
         for case in config.cases:
             for parameter in ('reference', 'candidate_targets', 'transcripts_path', 'annotation_path'):
                 path = case.parameters.get(parameter)
                 if path is not None:
                     assert isinstance(path, Path)
-                    assert path.exists()
+                    assert path.is_absolute()

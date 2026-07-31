@@ -25,6 +25,7 @@ class BatchCase:
 class BatchConfig:
     source: Path
     workspace_root: Path
+    publish: str
     cases: tuple[BatchCase, ...]
 
 
@@ -41,6 +42,10 @@ def load_batch_config(path: Path) -> BatchConfig:
     if not isinstance(workspace_value, str):
         raise TypeError(f'{path}: workspace_root must be a string')
     workspace_root = _resolve_path(source.parent, workspace_value)
+
+    publish = document.get('publish', 'development')
+    if not isinstance(publish, str) or publish not in {'development', 'files-only'}:
+        raise ValueError(f'{path}: publish must be "development" or "files-only"')
 
     defaults = document.get('defaults', {})
     if not isinstance(defaults, dict):
@@ -76,7 +81,7 @@ def load_batch_config(path: Path) -> BatchConfig:
 
         cases.append(BatchCase(name, simulator, enabled, merged))
 
-    return BatchConfig(source, workspace_root, tuple(cases))
+    return BatchConfig(source, workspace_root, publish, tuple(cases))
 
 
 def _resolve_path(base: Path, value: str) -> Path:

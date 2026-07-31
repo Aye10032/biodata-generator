@@ -46,6 +46,7 @@ The configuration is TOML and uses simulator function parameter names:
 ```toml
 version = 2
 workspace_root = "../.."
+publish = "files-only"
 
 [defaults]
 seed = 114514
@@ -67,6 +68,14 @@ long_read_mean = 1000
 long_read_sd = 100
 snvs = 5
 ```
+
+The four repository configs use `publish = "files-only"`. Batch generation
+runs each simulator in a temporary staging directory, then publishes only the
+files produced under the staging `raw/` directory directly into the configured
+case directory. Consequently, repository datasets have the compact layout
+`<species>/<assay>/<case>/<files>` with no `raw/`, `truth/`, or
+`manifest.json`. Use an individual simulator command when developing or testing
+the generator and the complete truth bundle is needed.
 
 Reference, annotation, transcript, and output paths are resolved relative to
 `workspace_root`, which is itself resolved relative to the TOML file. Case names
@@ -271,7 +280,7 @@ uv run bioflow-sim scrna \
   --seed 20260731
 ```
 
-## Output
+## Development output
 
 ```text
 <case>/
@@ -292,10 +301,13 @@ With `--annotation-path`, the Matrix Market output is gene-by-cell and at least
 Without an annotation, the command explicitly produces a transcript-by-cell
 matrix. The per-read truth always retains transcript and feature identifiers.
 
+This complete structure is produced by individual simulator commands.
 `raw/` contains files presented to an analysis tool as experimental inputs:
-reads, 10x barcode lists, and later assay metadata such as restriction-enzyme
-sites. `truth/` contains simulator-only expected results such as read origins,
-true variants, cell labels, and expression matrices.
+reads, 10x barcode lists, and assay metadata such as restriction-enzyme sites.
+`truth/` contains simulator-only expected results such as read origins, true
+variants, cell labels, and expression matrices. Species batch configs publish
+the contents of `raw/` directly into the case directory and discard the
+development-only `truth/` and `manifest.json` from staging.
 
 Only sequencing reads (`*.fastq.gz`) are compressed. Manifests, truth TSVs,
 barcodes, features, and Matrix Market files remain plain text because the
