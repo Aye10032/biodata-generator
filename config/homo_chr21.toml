@@ -211,3 +211,69 @@ reads = 200
 read_length = 100
 intra_rate = 1.0
 mean_distance = 100000
+
+[cases.tumor_normal_clonal]
+simulator = "tumor-normal"
+[cases.tumor_normal_clonal.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+candidate_targets = "Homo_chr21/reference/genes.bed"
+output_dir = "Homo_chr21/somatic/tumor_normal_clonal"
+pair_name = "H21_CLONAL"
+normal_sample = "H21_CLONAL_N"
+tumor_sample = "H21_CLONAL_T"
+target_count = 10
+target_width = 1000
+normal_depth = 30.0
+tumor_depth = 80.0
+tumor_purity = 1.0
+germline_snvs = 10
+clonal_snvs = 10
+subclonal_snvs = 0
+subclone_fraction = 0.0
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+
+[cases.tumor_normal_low_purity]
+simulator = "tumor-normal"
+[cases.tumor_normal_low_purity.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+candidate_targets = "Homo_chr21/reference/genes.bed"
+output_dir = "Homo_chr21/somatic/tumor_normal_low_purity"
+pair_name = "H21_LOW_PURITY"
+normal_sample = "H21_LOW_PURITY_N"
+tumor_sample = "H21_LOW_PURITY_T"
+target_count = 10
+target_width = 1000
+normal_depth = 30.0
+tumor_depth = 80.0
+tumor_purity = 0.3
+germline_snvs = 10
+clonal_snvs = 10
+subclonal_snvs = 0
+subclone_fraction = 0.0
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40
+
+[cases.tumor_normal_subclonal]
+simulator = "tumor-normal"
+[cases.tumor_normal_subclonal.parameters]
+reference = "Homo_chr21/reference/genome.fa"
+candidate_targets = "Homo_chr21/reference/genes.bed"
+output_dir = "Homo_chr21/somatic/tumor_normal_subclonal"
+pair_name = "H21_SUBCLONAL"
+normal_sample = "H21_SUBCLONAL_N"
+tumor_sample = "H21_SUBCLONAL_T"
+target_count = 10
+target_width = 1000
+normal_depth = 30.0
+tumor_depth = 80.0
+tumor_purity = 0.6
+germline_snvs = 10
+clonal_snvs = 5
+subclonal_snvs = 5
+subclone_fraction = 0.25
+read_length = 100
+fragment_mean = 300
+fragment_sd = 40

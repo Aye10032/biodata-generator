@@ -17,6 +17,7 @@ from bioflow_sim.simulators.dna import DNA_TECHNOLOGY_NAMES, simulate_dna
 from bioflow_sim.simulators.hic import HIC_ENZYMES, simulate_hic
 from bioflow_sim.simulators.methylation import METHYLATION_PROTOCOLS, simulate_methylation
 from bioflow_sim.simulators.scrna import SCRNA_PROTOCOLS, simulate_scrna
+from bioflow_sim.simulators.tumor_normal import simulate_tumor_normal
 
 
 def configure_logging(verbose: bool) -> None:
@@ -111,6 +112,44 @@ def dna_command(**kwargs: object) -> None:
     """Simulate Illumina, PacBio, or Oxford Nanopore genomic reads."""
     try:
         simulate_dna(**kwargs)
+    except (OSError, ValueError) as error:
+        raise click.ClickException(str(error)) from error
+
+
+@cli.command('tumor-normal')
+@click.option(
+    '--reference',
+    type=click.Path(path_type=Path, exists=True, dir_okay=False, readable=True),
+    required=True,
+    help='Genome FASTA, optionally gzip-compressed.',
+)
+@click.option(
+    '--candidate-targets',
+    type=click.Path(path_type=Path, exists=True, dir_okay=False, readable=True),
+    required=True,
+    help='BED intervals from which the simulated target panel is selected.',
+)
+@click.option('--output-dir', type=click.Path(path_type=Path, file_okay=False), required=True)
+@click.option('--pair-name', default='PAIR1', show_default=True)
+@click.option('--normal-sample', default='NORMAL', show_default=True)
+@click.option('--tumor-sample', default='TUMOR', show_default=True)
+@click.option('--target-count', type=click.IntRange(min=1), default=10, show_default=True)
+@click.option('--target-width', type=click.IntRange(min=1), default=1_000, show_default=True)
+@click.option('--normal-depth', type=click.FloatRange(min=0, min_open=True), default=30.0, show_default=True)
+@click.option('--tumor-depth', type=click.FloatRange(min=0, min_open=True), default=80.0, show_default=True)
+@click.option('--tumor-purity', type=click.FloatRange(min=0, max=1), default=0.6, show_default=True)
+@click.option('--germline-snvs', type=click.IntRange(min=0), default=10, show_default=True)
+@click.option('--clonal-snvs', type=click.IntRange(min=0), default=5, show_default=True)
+@click.option('--subclonal-snvs', type=click.IntRange(min=0), default=5, show_default=True)
+@click.option('--subclone-fraction', type=click.FloatRange(min=0, max=1), default=0.25, show_default=True)
+@click.option('--read-length', type=click.IntRange(min=20), default=100, show_default=True)
+@click.option('--fragment-mean', type=click.IntRange(min=40), default=300, show_default=True)
+@click.option('--fragment-sd', type=click.IntRange(min=0), default=40, show_default=True)
+@click.option('--seed', type=int, default=114514, show_default=True)
+def tumor_normal_command(**kwargs: object) -> None:
+    """Simulate a targeted normal-tumor DNA pair with expected somatic VAFs."""
+    try:
+        simulate_tumor_normal(**kwargs)
     except (OSError, ValueError) as error:
         raise click.ClickException(str(error)) from error
 

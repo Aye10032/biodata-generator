@@ -5,6 +5,7 @@ from pathlib import Path
 PATH_PARAMETERS = frozenset(
     {
         'reference',
+        'candidate_targets',
         'transcripts_path',
         'annotation_path',
         'output_dir',

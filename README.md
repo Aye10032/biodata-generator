@@ -130,6 +130,41 @@ uv run bioflow-sim dna \
   --snvs 20
 ```
 
+## Tumor-normal paired sequencing
+
+Generate a small targeted panel with a matched normal and tumor:
+
+```bash
+uv run bioflow-sim tumor-normal \
+  --reference ../Homo_chr21/reference/genome.fa \
+  --candidate-targets ../Homo_chr21/reference/genes.bed \
+  --output-dir ../Homo_chr21/somatic/smoke_pair \
+  --pair-name H21_PAIR \
+  --normal-sample H21_PAIR_N \
+  --tumor-sample H21_PAIR_T \
+  --target-count 10 \
+  --target-width 1000 \
+  --normal-depth 30 \
+  --tumor-depth 80 \
+  --tumor-purity 0.6 \
+  --germline-snvs 10 \
+  --clonal-snvs 5 \
+  --subclonal-snvs 5 \
+  --subclone-fraction 0.25
+```
+
+The normal and tumor share diploid heterozygous germline SNVs. The tumor adds
+clonal and optional subclonal somatic SNVs, while normal-cell contamination is
+sampled according to `--tumor-purity`. In the current copy-neutral model,
+expected somatic VAF is `purity * cancer-cell-fraction / 2`.
+
+`raw/` contains the four paired-end FASTQs and the selected `targets.bed`.
+Sample roles are encoded by the FASTQ names and `manifest.json`; no
+`samples.tsv` is generated. `truth/` contains germline and somatic VCFs,
+expected VAFs, clone fractions, copy-neutral segments, and per-read origins.
+Three ready-made cases in `config/homo_chr21.toml` cover pure clonal, low-purity
+clonal, and mixed clonal/subclonal tumors.
+
 ## Bulk RNA sequencing
 
 Generate control and treatment replicates with differential expression:
@@ -282,6 +317,7 @@ bioflow_sim/
     read_models.py
     regions.py
     sequences.py
+    tumor.py
     variants.py
   simulators/
     bulk_rna.py
@@ -290,6 +326,7 @@ bioflow_sim/
     hic.py
     methylation.py
     scrna.py
+    tumor_normal.py
   orchestration/
     batch.py
 ```
@@ -310,4 +347,5 @@ uv run pytest
 
 Tests cover deterministic Illumina output, long-read profiles, SNV truth,
 bulk RNA, chromatin assays, methylation, Hi-C, the 10x barcode/UMI layout,
-expression-matrix output, and per-cell Smart-seq2 files.
+expression-matrix output, per-cell Smart-seq2 files, and matched tumor-normal
+purity/VAF behavior.

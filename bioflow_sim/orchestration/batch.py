@@ -10,6 +10,7 @@ from bioflow_sim.simulators.dna import simulate_dna
 from bioflow_sim.simulators.hic import simulate_hic
 from bioflow_sim.simulators.methylation import simulate_methylation
 from bioflow_sim.simulators.scrna import simulate_scrna
+from bioflow_sim.simulators.tumor_normal import simulate_tumor_normal
 
 Simulator = Callable[..., dict[str, object]]
 
@@ -20,6 +21,7 @@ SIMULATORS: dict[str, Simulator] = {
     'hic': simulate_hic,
     'methylation': simulate_methylation,
     'scrna': simulate_scrna,
+    'tumor-normal': simulate_tumor_normal,
 }
 
 

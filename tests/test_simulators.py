@@ -42,6 +42,13 @@ def write_assay_reference(path: Path) -> None:
     )
 
 
+def write_targets(path: Path) -> None:
+    path.write_text(
+        'chr1\t100\t700\tGENE1\nchr1\t800\t1400\tGENE2\nchr2\t100\t700\tGENE3\n',
+        encoding='utf-8',
+    )
+
+
 def fastq_records(path: Path) -> list[list[str]]:
     with gzip.open(path, 'rt', encoding='ascii') as handle:
         lines = [line.rstrip('\n') for line in handle]
@@ -254,6 +261,79 @@ def test_dna_snv_truth(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     variants = (output / 'truth/variants.vcf').read_text(encoding='utf-8').splitlines()
     assert len([line for line in variants if not line.startswith('#')]) == 4
+
+
+def test_tumor_normal_pair_has_expected_truth_and_no_sample_sheet(tmp_path: Path) -> None:
+    reference = tmp_path / 'assay.fa'
+    targets = tmp_path / 'genes.bed'
+    write_assay_reference(reference)
+    write_targets(targets)
+    output = tmp_path / 'tumor_normal'
+    result = CliRunner().invoke(
+        cli,
+        [
+            'tumor-normal',
+            '--reference',
+            str(reference),
+            '--candidate-targets',
+            str(targets),
+            '--output-dir',
+            str(output),
+            '--pair-name',
+            'P01',
+            '--normal-sample',
+            'P01_N',
+            '--tumor-sample',
+            'P01_T',
+            '--target-count',
+            '2',
+            '--target-width',
+            '400',
+            '--normal-depth',
+            '2',
+            '--tumor-depth',
+            '4',
+            '--tumor-purity',
+            '0.6',
+            '--germline-snvs',
+            '2',
+            '--clonal-snvs',
+            '2',
+            '--subclonal-snvs',
+            '2',
+            '--subclone-fraction',
+            '0.25',
+            '--read-length',
+            '50',
+            '--fragment-mean',
+            '150',
+            '--fragment-sd',
+            '10',
+            '--seed',
+            '31',
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert len(fastq_records(output / 'raw/P01_N_R1.fastq.gz')) == 16
+    assert len(fastq_records(output / 'raw/P01_T_R1.fastq.gz')) == 32
+    assert (output / 'raw/targets.bed').exists()
+    assert not (output / 'raw/samples.tsv').exists()
+
+    germline = (output / 'truth/germline.vcf').read_text(encoding='utf-8').splitlines()
+    somatic = (output / 'truth/somatic.vcf').read_text(encoding='utf-8').splitlines()
+    assert len([line for line in germline if not line.startswith('#')]) == 2
+    assert len([line for line in somatic if not line.startswith('#')]) == 4
+
+    vaf_rows = [
+        line.split('\t') for line in (output / 'truth/expected_vaf.tsv').read_text(encoding='utf-8').splitlines()[1:]
+    ]
+    observed = {(row[1], row[4], row[5], row[6]) for row in vaf_rows}
+    assert ('germline', '0.500000', '0.500000', '1.000000') in observed
+    assert ('somatic_clonal', '0.000000', '0.300000', '1.000000') in observed
+    assert ('somatic_subclonal', '0.000000', '0.075000', '0.250000') in observed
+    assert (output / 'truth/clones.tsv').exists()
+    assert (output / 'truth/copy_number.tsv').exists()
+    assert (output / 'truth/read_origins.tsv').exists()
 
 
 def test_bulk_rna_command(tmp_path: Path) -> None:

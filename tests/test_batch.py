@@ -89,7 +89,7 @@ def test_default_config_resolves_repository_references() -> None:
         config = load_batch_config(config_path)
         assert config.cases
         for case in config.cases:
-            for parameter in ('reference', 'transcripts_path', 'annotation_path'):
+            for parameter in ('reference', 'candidate_targets', 'transcripts_path', 'annotation_path'):
                 path = case.parameters.get(parameter)
                 if path is not None:
                     assert isinstance(path, Path)

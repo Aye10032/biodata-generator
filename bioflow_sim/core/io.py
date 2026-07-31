@@ -81,6 +81,31 @@ def read_gtf_transcript_gene_map(path: Path) -> dict[str, str]:
     return mapping
 
 
+def read_bed(path: Path) -> list[tuple[str, int, int, str]]:
+    """Read the first four columns of a BED file."""
+    records: list[tuple[str, int, int, str]] = []
+    with _open_text(path) as handle:
+        for line_number, raw_line in enumerate(handle, 1):
+            line = raw_line.rstrip('\n')
+            if not line or line.startswith(('#', 'track ', 'browser ')):
+                continue
+            fields = line.split('\t')
+            if len(fields) < 3:
+                raise ValueError(f'{path}:{line_number}: BED record has fewer than three columns')
+            try:
+                start = int(fields[1])
+                end = int(fields[2])
+            except ValueError as error:
+                raise ValueError(f'{path}:{line_number}: invalid BED coordinates') from error
+            if start < 0 or end <= start:
+                raise ValueError(f'{path}:{line_number}: invalid BED interval {start}-{end}')
+            name = fields[3] if len(fields) > 3 and fields[3] else f'interval_{line_number}'
+            records.append((fields[0], start, end, name))
+    if not records:
+        raise ValueError(f'{path}: no BED records found')
+    return records
+
+
 @contextmanager
 def fastq_writer(path: Path) -> Iterator[TextIO]:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -117,6 +142,15 @@ def write_rows(
     with path.open('w', encoding='utf-8', newline='') as handle:
         writer = csv.writer(handle, delimiter=delimiter, lineterminator='\n')
         writer.writerows(rows)
+
+
+def write_lines(path: Path, lines: Iterable[str]) -> None:
+    """Write text lines verbatim with normalized line endings."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open('w', encoding='utf-8', newline='') as handle:
+        for line in lines:
+            handle.write(line)
+            handle.write('\n')
 
 
 def write_json(path: Path, value: object) -> None:
